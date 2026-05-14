@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1" name="viewport"/>
+<meta content="light dark" name="color-scheme"/>
+<title>PHD QA Support Tool – Reorganized + Extended Category Filter (v4.16j)</title>
+<style>
+    :root { --bg:#0b0c10; --card:#15171c; --ink:#eaeff7; --sub:#b8c1d6; --accent:#2d7ff9; --yes:#1fb980; --no:#e3516e; --na:#9aa3b2; --border:#2a2e36; --input:#0f1116; --btn-ghost-fg:#eaeff7; --shadow:rgba(0,0,0,.2);} 
+    :root.light { --bg:#f6f7fb; --card:#ffffff; --ink:#0b0c10; --sub:#475168; --accent:#2d7ff9; --yes:#1fb980; --no:#e3516e; --na:#687386; --border:#e5e8f0; --input:#ffffff; --btn-ghost-fg:#0b0c10; --shadow:rgba(0,0,0,.08);} 
+    *{box-sizing:border-box} html,body{height:100%} body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif} 
+    header{position:sticky;top:0;z-index:3;background:var(--card);border-bottom:1px solid var(--border);box-shadow:0 1px 0 var(--border)} 
+    .wrap{max-width:980px;margin:0 auto;padding:18px 20px} h1{margin:0 0 6px;font-size:22px} .toolbar{display:flex;gap:10px;flex-wrap:wrap} 
+    button{background:var(--accent);color:#fff;border:none;padding:10px 14px;border-radius:8px;font-weight:600;cursor:pointer;box-shadow:0 1px 2px var(--shadow)} 
+    .toggle{background:transparent;border:1px solid var(--border);color:var(--btn-ghost-fg)} main{padding:10px 20px 80px} 
+    .card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px;box-shadow:0 2px 8px var(--shadow)} 
+    h2.section{font-size:15px;color:var(--sub);margin:20px 0 8px;text-transform:uppercase;letter-spacing:.04em} form{display:block} 
+    .row{display:grid;grid-template-columns:1fr auto;gap:16px;align-items:center;border-top:1px solid var(--border);padding:10px 0} .row:first-of-type{border-top:0} 
+    .q-text{font-weight:600} .yn{display:flex;align-items:center;gap:10px} .yn input[type=radio]{position:absolute;opacity:0;pointer-events:none} 
+    .pill{border:1px solid var(--border);color:var(--ink);padding:6px 12px;border-radius:999px;cursor:pointer;user-select:none;font-weight:700} 
+    .pill.yes{border-color:rgba(31,185,128,.5)} .pill.no{border-color:rgba(227,81,110,.5)} .pill.na{border-color:rgba(154,163,178,.5)} 
+    input[type=radio]:checked+label.yes{background:rgba(31,185,128,.18);border-color:var(--yes);color:#0b3b2c} 
+    input[type=radio]:checked+label.no{background:rgba(227,81,110,.18);border-color:var(--no);color:#5b0f1a} 
+    input[type=radio]:checked+label.na{background:rgba(154,163,178,.18);border-color:var(--na);color:#2f3947} 
+    footer{position:sticky;bottom:0;padding:14px 20px;background:var(--card);border-top:1px solid var(--border);box-shadow:0 -1px 0 var(--border)} 
+    .footbar{max-width:980px;margin:0 auto;display:flex;gap:10px;align-items:center;justify-content:space-between} .status{color:var(--sub);font-size:13px} 
+    @media print{header,footer,.toolbar,#filtersCard{display:none!important} body{background:#fff;color:#000} .card{border:none;box-shadow:none}} ::selection{background:rgba(45,127,249,.25);color:var(--ink)} .hidden{display:none!important} 
+    .subsection{font-weight:700;color:var(--sub);margin:10px 0 6px}
+
+    /* Category wrapper and filter visibility */
+    section.category{margin-bottom:8px}
+    .filtered{display:none!important}
+
+    /* Filters UI */
+    #filtersCard{position:sticky;top:64px;z-index:2;margin-top:10px}
+    #filtersForm{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+    .chip{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--border);padding:6px 10px;border-radius:999px;cursor:pointer;user-select:none}
+    .chip input{accent-color:var(--accent)}
+    .filters-actions{margin-left:auto;display:flex;gap:8px}
+    .tiny{padding:6px 10px;font-size:12px}
+  
+.survey-note{margin:4px 0 10px;color:yellow;font-size:13px;}
+</style>
+</head>
+<body>
+<header>
+<div class="wrap">
+<h1>phd qa support tool — reorganized</h1>
+<div class="toolbar">
+<button class="toggle" id="themeBtn" title="Toggle light/dark" type="button">Light Theme</button>
+<button id="resetBtn" title="Clear all answers" type="button">Reset</button>
+</div>
+</div>
+</header>
+<!-- Filters card -->
+<div class="wrap" id="filtersCard">
+<div class="card">
+<form autocomplete="off" id="filtersForm">
+<strong style="color:var(--sub)">Filter categories:</strong>
+<label class="chip"><input checked="" data-cat="screen-pop" type="checkbox"/> Screen Pop</label>
+<label class="chip"><input checked="" data-cat="no-screen-pop" type="checkbox"/> No Screen Pop</label>
+<label class="chip"><input checked="" data-cat="principal-agency" type="checkbox"/> Principal of Agency</label>
+<label class="chip"><input checked="" data-cat="no-pop-agency" type="checkbox"/> No Screen Pop Agency</label>
+<label class="chip"><input checked="" data-cat="contact-verification" type="checkbox"/> Contact Verification</label>
+<label class="chip"><input checked="" data-cat="eligibility" type="checkbox"/> Eligibility Verification</label>
+<label class="chip"><input checked="" data-cat="non-eligibility" type="checkbox"/> Non Eligibility Verification</label>
+<label class="chip"><input checked="" data-cat="jarvis-not-located" type="checkbox"/> If not located in Jarvis (Comms/Apps)</label>
+<label class="chip"><input checked="" data-cat="consumer-specific" type="checkbox"/> Contact Verification – Consumer Specific</label>
+<!-- New per Option B -->
+<label class="chip"><input checked="" data-cat="comms-apps" type="checkbox"/> Comms / Apps</label>
+<div class="filters-actions">
+<button class="tiny" id="filtersAll" type="button">Select all</button>
+<button class="tiny" id="filtersNone" type="button">Clear all</button>
+</div>
+</form>
+</div>
+</div>
+<main>
+<div class="wrap">
+<div class="card">
+<form id="scriptForm">
+<!-- ====== GROUP 1: SCREEN POP ====== -->
+<section class="category" data-cat="screen-pop">
+<h2 class="section">Screen Pop</h2><p class="survey-note">Please mention the survey</p>
+<div id="screenPopSection">
+<div class="row"><label class="q-text" for="q1-yes">“Thank you for calling the Producer Help Desk. My name is _____ , may I have your first and last name?”</label></div>
+<div class="row"><label class="q-text" for="q20-yes">“I see your information came through.”</label></div>
+</div>
+</section>
+<!-- ====== GROUP 2: NO SCREEN POP ====== -->
+<section class="category" data-cat="no-screen-pop">
+<h2 class="section">No Screen Pop</h2><p class="survey-note">Please mention the survey</p>
+<div id="noPopSection">
+<div class="row"><label class="q-text" for="q2-yes">“Thank you for calling the Producer Help Desk. My name is _____ , may I have your first and last name?”</label></div>
+<div class="row"><label class="q-text" for="q3-yes">Collect WID</label></div>
+<div class="row"><label class="q-text" for="q4-yes">Collect PID</label></div>
+<div class="row"><label class="q-text" for="q5-yes">Collect Tax ID</label></div>
+</div>
+</section>
+<!-- ====== GROUP 3: PRINCIPAL OF AGENCY VERIFICATION ====== -->
+<section class="category" data-cat="principal-agency">
+<h2 class="section">Principal of Agency Verification</h2><p class="survey-note">Please mention the survey</p>
+<div id="principalAgencySection">
+<div class="row"><label class="q-text" for="q21-yes">Are you calling on behalf of an agency?</label></div>
+<div class="row"><label class="q-text" for="q22-yes">I see the agency's information came through. Since you are the principal that's all I need.</label></div>
+</div>
+</section>
+<!-- ====== GROUP 4: NO SCREEN POP AGENCY ====== -->
+<section class="category" data-cat="no-pop-agency">
+<h2 class="section">No Screen Pop Agency</h2><p class="survey-note">Please mention the survey</p>
+<div id="noPopAgencySection">
+<div class="row"><label class="q-text" for="q24-yes">Are you calling on behalf of an agency?</label></div>
+<div class="row"><label class="q-text" for="q25-yes">I don’t see that the Agency's information came through.</label></div>
+<div class="row"><label class="q-text" for="q26-yes">May I have the Agency's name? (not needed if caller already says it)</label></div>
+<div class="row"><label class="q-text" for="q27-yes">May I have the Agency's writing ID?</label></div>
+<div class="row"><label class="q-text" for="q28-yes">Since you are the principal that's all I need.</label></div>
+</div>
+</section>
+<!-- ====== GROUP 5: CONTACT VERIFICATION ====== -->
+<section class="category" data-cat="contact-verification">
+<h2 class="section">Contact Verification</h2><p class="survey-note">Please mention the survey</p>
+<div id="contactVerificationSection">
+<div class="subsection">Screen Pop</div>
+<div class="row"><label class="q-text" for="q30-yes">Are you calling on behalf of someone (agency)?” Or “Since you are calling on behalf of someone</label></div>
+<div class="row"><label class="q-text" for="q31-yes">Could you please provide your email address?</label></div>
+<div class="row"><label class="q-text" for="q32-yes">Thank you for providing the agent’s information.</label></div>
+<div class="subsection">No Screen Pop</div>
+<div class="row"><label class="q-text" for="q33-yes">Since you are calling on behalf of someone.</label></div>
+<div class="row"><label class="q-text" for="q34-yes">Could you please provide your email?</label></div>
+<div class="row"><label class="q-text" for="q35-yes">I don’t see that the agent’s/agency's information came through.</label></div>
+<div class="row"><label class="q-text" for="q36-yes">May I have the agent’s writing ID?</label></div>
+<div class="row"><label class="q-text" for="q37-yes">Collect email address</label></div>
+</div>
+</section>
+<!-- ====== ACKNOWLEDGEMENTS (as its own category) ====== -->
+<!-- ====== CONSUMER SPECIFIC (its own category) ====== -->
+<section class="category" data-cat="consumer-specific">
+<h2 class="section">Contact Verification – Consumer Specific</h2><p class="survey-note">Please mention the survey</p>
+<div id="consumerSpecificSection">
+<div class="row"><label class="q-text" for="q38-yes">Since we are looking at a specific consumer, may I have the agent’s WID, PID, TID.</label></div>
+<div class="row"><label class="q-text" for="q42-yes">Collect agent Tax ID (consumer context)</label></div>
+</div>
+</section>
+<!-- ====== COMMS / APPS (as its own category, Jarvis subset separate) ====== -->
+<section class="category" data-cat="comms-apps">
+<h2 class="section">Comms / Apps</h2><p class="survey-note">Please mention the survey</p>
+<div id="commsAppsSection">
+<div class="row"><label class="q-text" for="q43-yes">May I have the Member’s First and Last name? OR Thank you for verifying the first and last name of your member/enrollee.</label></div>
+<div class="row"><label class="q-text" for="q44-yes">I see them in Jarvis</label></div>
+</div>
+</section>
+<!-- Jarvis NOT located subsection (kept as its own category) -->
+<section class="category" data-cat="jarvis-not-located">
+<p class="survey-note">Please mention the survey</p><div id="jarvisNotLocatedSection">
+<div class="subsection">If not located in Jarvis</div>
+<div class="row"><label class="q-text" for="q45-yes">May I have the Member’s First and last name?</label></div>
+<div class="row"><label class="q-text" for="q46-yes">I do not see them in Jarvis</label></div>
+<div class="row"><label class="q-text" for="q47-yes">May I have the Date of Birth?</label></div><div class="row"><label class="q-text" for="q48-yes">May I have the Member’s Medicare number or Member number?</label></div>
+</div>
+</section>
+<!-- ====== ELIGIBILITY VERIFICATION (MMV) ====== -->
+<section class="category" data-cat="eligibility">
+<h2 class="section">Eligibility Verification</h2><p class="survey-note">Please mention the survey</p>
+<div id="eligibilitySection">
+<div class="row"><label class="q-text" for="q48-yes">Since we are doing a Medicare/Medicaid verification, when did you get permission to contact?</label></div>
+<div class="row"><label class="q-text" for="q49-yes">May I have the Client’s first and last name and date of birth?</label></div>
+</div>
+</section>
+<!-- ====== NON ELIGIBILITY VERIFICATION ====== -->
+<section class="category" data-cat="non-eligibility">
+<div id="nonEligibilitySection">
+<h2 class="section">Non Eligibility Verification</h2><p class="survey-note">Please mention the survey</p>
+<div class="row">
+<label class="q-text" for="q51-yes">Call is Member related: “Since you came through on the Eligibility line and Permission to Call is not required can I have the members First and Last Name?”</label>
+</div>
+<div class="row" id="nonEligQ2Row">
+<label class="q-text" for="q52-yes">Call is NOT MEMBER RELATED: Since you came through on the Eligibility line I do not need permission to call, and I do not need the members first and last name and date of birth”</label>
+</div>
+</div>
+</section>
+<input hidden="" id="nativeReset" type="reset"/>
+</form>
+</div>
+</div>
+</main>
+<footer>
+<div class="footbar">
+<div class="status" id="status">Unsaved</div>
+<div><small class="status">Selections are stored locally in your browser on this device.</small></div>
+</div>
+</footer>
+<script>
+  (function(){
+    const form = document.getElementById('scriptForm');
+    const nativeReset = document.getElementById('nativeReset');
+    const statusEl = document.getElementById('status');
+    const themeBtn = document.getElementById('themeBtn');
+
+    // Section handles used by original logic
+    const noPopSection = document.getElementById('noPopSection');
+    const noPopAgencySection = document.getElementById('noPopAgencySection');
+    const contactVerificationSection = document.getElementById('contactVerificationSection');
+    const consumerSpecificSection = document.getElementById('consumerSpecificSection');
+    const jarvisNotLocatedSection = document.getElementById('jarvisNotLocatedSection');
+    const ackAgencyRow = document.getElementById('ackAgencyRow');
+    const nonEligQ2Row = document.getElementById('nonEligQ2Row');
+    const nonEligibilitySection = document.getElementById('nonEligibilitySection');
+
+    // Category wrappers for filtering
+    const categorySections = {
+      'screen-pop': document.querySelector('section.category[data-cat="screen-pop"]'),
+      'no-screen-pop': document.querySelector('section.category[data-cat="no-screen-pop"]'),
+      'principal-agency': document.querySelector('section.category[data-cat="principal-agency"]'),
+      'no-pop-agency': document.querySelector('section.category[data-cat="no-pop-agency"]'),
+      'contact-verification': document.querySelector('section.category[data-cat="contact-verification"]'),
+      'acknowledgements': document.querySelector('section.category[data-cat="acknowledgements"]'),
+      'comms-apps': document.querySelector('section.category[data-cat="comms-apps"]'),
+      'jarvis-not-located': document.querySelector('section.category[data-cat="jarvis-not-located"]'),
+      'consumer-specific': document.querySelector('section.category[data-cat="consumer-specific"]'),
+      'eligibility': document.querySelector('section.category[data-cat="eligibility"]'),
+      'non-eligibility': document.querySelector('section.category[data-cat="non-eligibility"]'),
+    };
+
+    // Storage + theme keys
+    const STORAGE_KEY = 'producer_scripting_answers_v4_16j';
+    const THEME_KEY = 'producer_scripting_theme_v1';
+    const FILTER_KEY = 'producer_scripting_filters_v3';
+
+    function applyTheme(t){ document.documentElement.classList.toggle('light', t === 'light'); themeBtn.textContent = (t === 'light') ? 'Dark Theme' : 'Light Theme'; }
+    function loadTheme(){ let t='dark'; try{ t = localStorage.getItem(THEME_KEY) || 'dark'; }catch(e){} applyTheme(t); }
+    function toggleTheme(){ const next = document.documentElement.classList.contains('light') ? 'dark' : 'light'; try{ localStorage.setItem(THEME_KEY,next);}catch(e){} applyTheme(next);}    
+
+    function status(text){ statusEl.textContent = text+' • '+new Date().toLocaleTimeString(); }
+
+    function save(){
+      const data={};
+      const groups=[...new Set([...form.querySelectorAll('input[type="radio"]')].map(i=>i.name))];
+      groups.forEach(n=>{ const c=form.querySelector(`input[name="${n}"]:checked`); data[n]=c?c.value:''; });
+      try{ localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }catch(e){}
+      status('Saved');
+    }
+
+    function clearRadiosWithin(el){ el && el.querySelectorAll && el.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false); }
+
+    // ===== Original interaction logic preserved =====
+    function updateNoPopVisibility(){
+      const q1=form.querySelector('input[name="q1"]:checked');
+      const q21=form.querySelector('input[name="q21"]:checked');
+      const hideByScreenPop = q1 && q1.value==='Yes';
+      const hideByPrincipalNo = q21 && q21.value==='No';
+      const hide = hideByScreenPop || hideByPrincipalNo;
+      if(hide){
+        noPopSection.classList.add('hidden');
+        clearRadiosWithin(noPopSection);
+        try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw){ const d=JSON.parse(raw); ['q2','q3','q4','q5'].forEach(k=>delete d[k]); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } }catch(e){}
+      } else { noPopSection.classList.remove('hidden'); }
+    }
+    function updateAcknowledgementsVisibility(){
+      const q18=form.querySelector('input[name="q18"]:checked');
+      if(q18 && q18.value==='Yes'){
+        ackAgencyRow.classList.add('hidden');
+        clearRadiosWithin(ackAgencyRow);
+        try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw){ const d=JSON.parse(raw); delete d.q19; localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } }catch(e){}
+      } else { ackAgencyRow.classList.remove('hidden'); }
+    }
+    function collapseByPrincipal(sectionEl, keys){
+      const q21=form.querySelector('input[name="q21"]:checked');
+      if(q21 && q21.value==='No'){
+        sectionEl.classList.add('hidden');
+        clearRadiosWithin(sectionEl);
+        try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw){ const d=JSON.parse(raw); keys.forEach(k=>delete d[k]); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } }catch(e){}
+      } else { sectionEl.classList.remove('hidden'); }
+    }
+    function updateByPrincipal(){
+      collapseByPrincipal(noPopAgencySection, ['q24','q25','q26','q27','q28','q29']);
+      collapseByPrincipal(contactVerificationSection, ['q30','q31','q32','q33','q34','q35','q36','q37']);
+      collapseByPrincipal(consumerSpecificSection, ['q38','q39','q40','q41','q42']);
+    }
+    function updateJarvisNotLocated(){
+      const found = form.querySelector('input[name="q44"]:checked');
+      const isYes = found && found.value==='Yes';
+      if(isYes){
+        jarvisNotLocatedSection.classList.add('hidden');
+        clearRadiosWithin(jarvisNotLocatedSection);
+        try{ const raw=localStorage.getItem(STORAGE_KEY); if(raw){ const d=JSON.parse(raw); ['q45','q46','q47'].forEach(k=>delete d[k]); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } }catch(e){}
+      } else { jarvisNotLocatedSection.classList.remove('hidden'); }
+    }
+    function updateNonEligibility(){
+      if(!nonEligQ2Row) return;
+      const q51 = form.querySelector('input[name="q51"]:checked');
+      if(q51 && q51.value==='Yes'){
+        nonEligQ2Row.classList.add('hidden');
+        clearRadiosWithin(nonEligQ2Row);
+        try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const d = JSON.parse(raw); delete d.q52; localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }}catch(e){}
+      } else { nonEligQ2Row.classList.remove('hidden'); }
+    }
+    function updateNonEligibilityByQ48(){
+      if(!nonEligibilitySection) return;
+      const q48 = form.querySelector('input[name="q48"]:checked');
+      if(q48 && q48.value==='Yes'){
+        nonEligibilitySection.classList.add('hidden');
+        clearRadiosWithin(nonEligibilitySection);
+        try{ const raw = localStorage.getItem(STORAGE_KEY); if(raw){ const d = JSON.parse(raw); ['q51','q52'].forEach(k=>delete d[k]); localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }}catch(e){}
+      } else { nonEligibilitySection.classList.remove('hidden'); }
+    }
+
+    // ===== Category filters =====
+    const filtersForm = document.getElementById('filtersForm');
+    const filterInputs = [...filtersForm.querySelectorAll('input[type="checkbox"][data-cat]')];
+
+    function getFilterState(){
+      const st = {};
+      filterInputs.forEach(cb=>{ st[cb.dataset.cat] = !!cb.checked; });
+      return st;
+    }
+    function applyFilters(state){
+      Object.keys(categorySections).forEach(cat=>{
+        const on = state[cat] !== false; // default true
+        const el = categorySections[cat];
+        if(!el) return;
+        if(on){ el.classList.remove('filtered'); } else { el.classList.add('filtered'); }
+      });
+    }
+    function loadFilters(){
+      let st = null; try{ st = JSON.parse(localStorage.getItem(FILTER_KEY) || 'null'); }catch(e){ st = null; }
+      if(!st){ st = { 'screen-pop': true, 'no-screen-pop': true, 'principal-agency': true, 'no-pop-agency': true, 'contact-verification': true, 'acknowledgements': true, 'comms-apps': true, 'jarvis-not-located': true, 'consumer-specific': true, 'eligibility': true, 'non-eligibility': true }; }
+      filterInputs.forEach(cb=>{ const cat = cb.dataset.cat; cb.checked = !!st[cat]; });
+      applyFilters(st);
+    }
+    function saveFilters(){
+      const st = getFilterState();
+      try{ localStorage.setItem(FILTER_KEY, JSON.stringify(st)); }catch(e){}
+    }
+
+    document.getElementById('filtersAll').addEventListener('click', ()=>{ filterInputs.forEach(cb=>cb.checked = true); saveFilters(); applyFilters(getFilterState()); });
+    document.getElementById('filtersNone').addEventListener('click', ()=>{ filterInputs.forEach(cb=>cb.checked = false); saveFilters(); applyFilters(getFilterState()); });
+    filtersForm.addEventListener('change', ()=>{ saveFilters(); applyFilters(getFilterState()); });
+
+    function load(){
+      let data=null; try{ data=JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null'); }catch(e){ data=null; }
+      if(data){ Object.keys(data).forEach(k=>{ const v=data[k]; if(!v) return; const input=form.querySelector(`input[name="${k}"][value="${v}"]`); if(input) input.checked=true; }); status('Loaded'); }
+      updateNoPopVisibility();
+      updateAcknowledgementsVisibility();
+      updateByPrincipal();
+      updateJarvisNotLocated();
+      updateNonEligibility();
+      updateNonEligibilityByQ48();
+      loadFilters();
+    }
+
+    function resetAll(ev){
+      if(ev) ev.preventDefault();
+      nativeReset.click();
+      form.querySelectorAll('input[type="radio"]').forEach(r=>r.checked=false);
+      try{ localStorage.removeItem(STORAGE_KEY);}catch(e){}
+      status('Reset');
+      updateNoPopVisibility();
+      updateAcknowledgementsVisibility();
+      updateByPrincipal();
+      updateJarvisNotLocated();
+      updateNonEligibility();
+      updateNonEligibilityByQ48();
+    }
+
+    form.addEventListener('change', e=>{ if(e.target){ if(e.target.name==='q1' || e.target.name==='q21') updateNoPopVisibility(); if(e.target.name==='q18') updateAcknowledgementsVisibility(); if(e.target.name==='q21') updateByPrincipal(); if(e.target.name==='q44') updateJarvisNotLocated(); updateNonEligibility(); updateNonEligibilityByQ48(); } save(); });
+
+    themeBtn.addEventListener('click', toggleTheme);
+    document.getElementById('resetBtn').addEventListener('click', resetAll);
+
+    loadTheme();
+    load();
+    status('Ready');
+  })();
+  </script>
+</body>
+</html>
