@@ -1,34 +1,57 @@
 <!DOCTYPE html>
 <html>
-<body style=<div class="wrap">
+<head>
+<title>PHD QA Tool</title>
+<style>
+body {
+  background:#0b0c10;
+  color:white;
+  font-family:Arial;
+  margin:20px;
+}
+.card {
+  border:1px solid #333;
+  border-radius:10px;
+  padding:15px;
+  margin-bottom:15px;
+}
+.filters label {
+  margin-right:10px;
+  cursor:pointer;
+}
+.hidden {
+  display:none;
+}
+</style>
+</head>
 
-<h1 style="color:white">PHD QA SUPPORT TOOL ✅</h1>
+<body>
+
+<h1>PHD QA SUPPORT TOOL</h1>
 
 <!-- FILTERS -->
-<div class="card">
-<label><input type="checkbox" checked data-cat="screen-pop"> Screen Pop</label>
-<label><input type="checkbox" checked data-cat="no-screen-pop"> No Screen Pop</label>
-<label><input type="checkbox" checked data-cat="contact-verification"> Contact Verification</label>
-<label><input type="checkbox" checked data-cat="contact-no-screen-pop"> Contact No Screen Pop</label>
-</div>
+<div class="card filters">
 
-<!-- SCREEN POP -->
-<div class="card category" data-cat="screen-pop">
-<h2>Screen Pop</h2>
-<div>“Thank you for calling the Producer Help Desk…”</div>
-<div>“I see your information came through.”</div>
+<label><input type="checkbox" checked data-cat="contact-verification"> Contact Verification</label>
+
+<label><input type="checkbox" checked data-cat="contact-no-screen-pop">
+Contact No Screen Pop</label>
+
 </div>
 
 <!-- CONTACT VERIFICATION -->
 <div class="card category" data-cat="contact-verification">
 <h2>Contact Verification</h2>
+
 <div>Are you calling on behalf of someone?</div>
 <div>Could you provide your email address?</div>
 <div>Thank you for providing the agent’s information.</div>
+
 </div>
 
 <!-- ✅ NEW CATEGORY -->
 <div class="card category" data-cat="contact-no-screen-pop">
+
 <h2>Contact Verification – No Screen Pop</h2>
 
 <div>Since you are calling on behalf of someone.</div>
@@ -39,16 +62,19 @@
 
 </div>
 
-</div>
-
 <script>
 document.querySelectorAll('[data-cat]').forEach(cb=>{
   cb.addEventListener('change',()=>{
     document.querySelectorAll('.category').forEach(sec=>{
       const cat = sec.dataset.cat;
-      const chk = document.querySelector('[data-cat="'+cat+'"]');
-      if(chk) sec.style.display = chk.checked ? "block" : "none";
+      const checkbox = document.querySelector('[data-cat="'+cat+'"]');
+      if(checkbox){
+        sec.classList.toggle('hidden', !checkbox.checked);
+      }
     });
   });
 });
-</script>>
+</script>
+
+</body>
+</html>
