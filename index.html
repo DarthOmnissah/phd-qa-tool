@@ -1,30 +1,104 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>PHD QA Tool</title>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1"/>
+<meta name="color-scheme" content="light dark"/>
+<title>PHD QA Support Tool</title>
+
 <style>
-body {
-  background:#0b0c10;
-  color:white;
-  font-family:Arial;
-  margin:20px;
-}
-.card {
-  border:1px solid #333;
-  border-radius:10px;
-  padding:15px;
-  margin-bottom:15px;
-}
+:root { --bg:#0b0c10; --card:#15171c; --ink:#eaeff7; --sub:#b8c1d6; --accent:#2d7ff9; --border:#2a2e36;}
+:root.light { --bg:#f6f7fb; --card:#ffffff; --ink:#0b0c10; --sub:#475168; --border:#e5e8f0;}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui;}
+.wrap{max-width:1000px;margin:auto;padding:20px;}
+.card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;}
+.section{text-transform:uppercase;font-size:14px;color:var(--sub);}
+.row{border-top:1px solid var(--border);padding:8px 0;}
+.row:first-child{border-top:none;}
+.q-text{font-weight:600;}
+.chip{display:inline-block;border:1px solid var(--border);border-radius:999px;padding:6px 10px;margin:4px;cursor:pointer;}
+.filtered{display:none!important;}
+.hidden{display:none!important;}
 </style>
 </head>
 
 <body>
 
-<h1>PHD QA TOOL ✅ WORKING</h1>
+<div class="wrap">
 
+<!-- FILTERS -->
 <div class="card">
-Contact Verification – No Screen Pop
+<strong>Filter categories:</strong><br>
+
+<label class="chip"><input type="checkbox" checked data-cat="screen-pop"> Screen Pop</label>
+<label class="chip"><input type="checkbox" checked data-cat="no-screen-pop"> No Screen Pop</label>
+<label class="chip"><input type="checkbox" checked data-cat="principal-agency"> Principal of Agency</label>
+<label class="chip"><input type="checkbox" checked data-cat="no-pop-agency"> No Screen Pop Agency</label>
+<label class="chip"><input type="checkbox" checked data-cat="contact-verification"> Contact Verification</label>
+
+<!-- ✅ NEW FILTER -->
+<label class="chip"><input type="checkbox" checked data-cat="contact-no-screen-pop"> Contact – No Screen Pop</label>
+
+<label class="chip"><input type="checkbox" checked data-cat="consumer-specific"> Consumer Specific</label>
+<label class="chip"><input type="checkbox" checked data-cat="comms-apps"> Comms / Apps</label>
+<label class="chip"><input type="checkbox" checked data-cat="jarvis-not-located"> Jarvis Not Located</label>
+<label class="chip"><input type="checkbox" checked data-cat="eligibility"> Eligibility</label>
+<label class="chip"><input type="checkbox" checked data-cat="non-eligibility"> Non Eligibility</label>
 </div>
+
+<!-- SCREEN POP -->
+<div class="card category" data-cat="screen-pop">
+<h2 class="section">Screen Pop</h2>
+<div class="row"><span class="q-text">Thank you for calling the Producer Help Desk. May I have your name?</span></div>
+<div class="row"><span class="q-text">I see your information came through.</span></div>
+</div>
+
+<!-- NO SCREEN POP -->
+<div class="card category" data-cat="no-screen-pop">
+<h2 class="section">No Screen Pop</h2>
+<div class="row"><span class="q-text">Collect WID</span></div>
+<div class="row"><span class="q-text">Collect PID</span></div>
+<div class="row"><span class="q-text">Collect Tax ID</span></div>
+</div>
+
+<!-- CONTACT VERIFICATION -->
+<div class="card category" data-cat="contact-verification">
+<h2 class="section">Contact Verification</h2>
+<div class="row"><span class="q-text">Are you calling on behalf of someone?</span></div>
+<div class="row"><span class="q-text">Could you provide your email address?</span></div>
+<div class="row"><span class="q-text">Thank you for providing the agent’s information.</span></div>
+</div>
+
+<!-- ✅ NEW CATEGORY -->
+<div class="card category" data-cat="contact-no-screen-pop">
+<h2 class="section">Contact Verification – No Screen Pop</h2>
+
+<div class="row"><span class="q-text">Since you are calling on behalf of someone.</span></div>
+<div class="row"><span class="q-text">Could you please provide your email?</span></div>
+<div class="row"><span class="q-text">I don’t see that the agent’s/agency's information came through.</span></div>
+<div class="row"><span class="q-text">May I have the agent’s writing ID?</span></div>
+<div class="row"><span class="q-text">Collect email address</span></div>
+
+</div>
+
+</div>
+
+<script>
+const filters = document.querySelectorAll('[data-cat]');
+const sections = document.querySelectorAll('.category');
+
+filters.forEach(cb => {
+  cb.addEventListener('change', () => {
+    sections.forEach(sec => {
+      const cat = sec.dataset.cat;
+      const checkbox = document.querySelector('[data-cat="'+cat+'"]');
+      if (checkbox) {
+        sec.classList.toggle('filtered', !checkbox.checked);
+      }
+    });
+  });
+});
+</script>
 
 </body>
 </html>
