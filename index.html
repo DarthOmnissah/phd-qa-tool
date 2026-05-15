@@ -1,11 +1,52 @@
-<!DOCTYPE html>
-<html>
-<head>
-<title>WORKING</title>
-</head>
-<body style="background:black;color:white;font-family:Arial">
+<div class="wrap">
 
-<h1>✅ GitHub Pages is Working</h1>
+<h1 style="color:white">PHD QA SUPPORT TOOL ✅</h1>
 
-</body>
-</html>
+<!-- FILTERS -->
+<div class="card">
+<label><input type="checkbox" checked data-cat="screen-pop"> Screen Pop</label>
+<label><input type="checkbox" checked data-cat="no-screen-pop"> No Screen Pop</label>
+<label><input type="checkbox" checked data-cat="contact-verification"> Contact Verification</label>
+<label><input type="checkbox" checked data-cat="contact-no-screen-pop"> Contact No Screen Pop</label>
+</div>
+
+<!-- SCREEN POP -->
+<div class="card category" data-cat="screen-pop">
+<h2>Screen Pop</h2>
+<div>“Thank you for calling the Producer Help Desk…”</div>
+<div>“I see your information came through.”</div>
+</div>
+
+<!-- CONTACT VERIFICATION -->
+<div class="card category" data-cat="contact-verification">
+<h2>Contact Verification</h2>
+<div>Are you calling on behalf of someone?</div>
+<div>Could you provide your email address?</div>
+<div>Thank you for providing the agent’s information.</div>
+</div>
+
+<!-- ✅ NEW CATEGORY -->
+<div class="card category" data-cat="contact-no-screen-pop">
+<h2>Contact Verification – No Screen Pop</h2>
+
+<div>Since you are calling on behalf of someone.</div>
+<div>Could you please provide your email?</div>
+<div>I don’t see that the agent’s/agency's information came through.</div>
+<div>May I have the agent’s writing ID?</div>
+<div>Collect email address</div>
+
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('[data-cat]').forEach(cb=>{
+  cb.addEventListener('change',()=>{
+    document.querySelectorAll('.category').forEach(sec=>{
+      const cat = sec.dataset.cat;
+      const chk = document.querySelector('[data-cat="'+cat+'"]');
+      if(chk) sec.style.display = chk.checked ? "block" : "none";
+    });
+  });
+});
+</script>
