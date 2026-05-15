@@ -1,82 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<meta name="color-scheme" content="light dark"/>
-<title>PHD QA Support Tool – FINAL</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>PHD QA Tool</title>
 
 <style>
-:root { --bg:#0b0c10; --card:#15171c; --ink:#eaeff7; --sub:#b8c1d6; --accent:#2d7ff9; --border:#2a2e36;}
-:root.light { --bg:#f6f7fb; --card:#ffffff; --ink:#0b0c10; --sub:#475168; --border:#e5e8f0;}
-*{box-sizing:border-box}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui}
-.wrap{max-width:980px;margin:auto;padding:16px}
-.card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:14px;margin-bottom:12px}
-.section{font-size:14px;color:var(--sub);text-transform:uppercase}
-.row{padding:8px 0;border-top:1px solid var(--border)}
-.row:first-child{border-top:none}
-.q-text{font-weight:600}
-.chip{border:1px solid var(--border);border-radius:999px;padding:6px 10px;margin:4px;display:inline-block;cursor:pointer}
-.filtered{display:none!important}
+body { margin:0; background:#0b0c10; color:#fff; font-family:Arial; }
+.wrap { max-width:900px; margin:auto; padding:20px; }
+.card { border:1px solid #333; border-radius:10px; padding:15px; margin-bottom:15px; }
+.section { color:#aaa; font-size:14px; text-transform:uppercase; }
+.row { padding:8px 0; border-top:1px solid #333; }
+.row:first-child { border-top:none; }
+.q-text { font-weight:bold; }
+.filters label { margin-right:10px; cursor:pointer; }
+.filtered { display:none; }
 </style>
 </head>
 
 <body>
 
+<div class="wrap">
+
 <!-- FILTERS -->
-<div class="wrap">
-<div class="card">
-<strong>Filter categories:</strong><br>
-
-<label class="chip"><input type="checkbox" checked data-cat="screen-pop"> Screen Pop</label>
-<label class="chip"><input type="checkbox" checked data-cat="no-screen-pop"> No Screen Pop</label>
-<label class="chip"><input type="checkbox" checked data-cat="principal-agency"> Principal of Agency</label>
-<label class="chip"><input type="checkbox" checked data-cat="no-pop-agency"> No Screen Pop Agency</label>
-<label class="chip"><input type="checkbox" checked data-cat="contact-verification"> Contact Verification</label>
-
-<!-- ✅ NEW -->
-<label class="chip"><input type="checkbox" checked data-cat="contact-no-screen-pop"> Contact – No Screen Pop</label>
-
-<label class="chip"><input type="checkbox" checked data-cat="consumer-specific"> Consumer Specific</label>
-<label class="chip"><input type="checkbox" checked data-cat="comms-apps"> Comms / Apps</label>
-<label class="chip"><input type="checkbox" checked data-cat="jarvis-not-located"> Jarvis Not Located</label>
-<label class="chip"><input type="checkbox" checked data-cat="eligibility"> Eligibility</label>
-<label class="chip"><input type="checkbox" checked data-cat="non-eligibility"> Non Eligibility</label>
-
-</div>
-</div>
-
-<div class="wrap">
-
-<!-- SCREEN POP -->
-<div class="card category" data-cat="screen-pop">
-<h2 class="section">Screen Pop</h2>
-<div class="row"><div class="q-text">Thank you for calling the Producer Help Desk...</div></div>
-</div>
-
-<!-- NO SCREEN POP -->
-<div class="card category" data-cat="no-screen-pop">
-<h2 class="section">No Screen Pop</h2>
-<div class="row"><div class="q-text">Collect WID</div></div>
-<div class="row"><div class="q-text">Collect PID</div></div>
-<div class="row"><div class="q-text">Collect Tax ID</div></div>
-</div>
-
-<!-- PRINCIPAL -->
-<div class="card category" data-cat="principal-agency">
-<h2 class="section">Principal of Agency</h2>
-<div class="row"><div class="q-text">Are you calling on behalf of an agency?</div></div>
+<div class="card filters">
+<label><input type="checkbox" checked data-cat="contact-verification"> Contact Verification</label>
+<label><input type="checkbox" checked data-cat="contact-no-screen-pop"> Contact No Screen Pop</label>
 </div>
 
 <!-- CONTACT VERIFICATION -->
 <div class="card category" data-cat="contact-verification">
 <h2 class="section">Contact Verification</h2>
-
 <div class="row"><div class="q-text">Are you calling on behalf of someone?</div></div>
 <div class="row"><div class="q-text">Could you provide your email address?</div></div>
 <div class="row"><div class="q-text">Thank you for providing the agent’s information.</div></div>
-
 </div>
 
 <!-- ✅ NEW CATEGORY -->
@@ -91,32 +48,17 @@ body{margin:0;background:var(--bg);color:var(--ink);font:16px system-ui}
 
 </div>
 
-<!-- ELIGIBILITY -->
-<div class="card category" data-cat="eligibility">
-<h2 class="section">Eligibility Verification</h2>
-<div class="row"><div class="q-text">May I have the client name and DOB?</div></div>
-</div>
-
-<!-- NON ELIGIBILITY -->
-<div class="card category" data-cat="non-eligibility">
-<h2 class="section">Non Eligibility Verification</h2>
-<div class="row"><div class="q-text">Member related call handling</div></div>
-</div>
-
 </div>
 
 <script>
-const filters = document.querySelectorAll('[data-cat]');
-const sections = document.querySelectorAll('.category');
-
-filters.forEach(cb=>{
-cb.addEventListener('change',()=>{
-sections.forEach(sec=>{
-const cat = sec.dataset.cat;
-const chk = document.querySelector('[data-cat="'+cat+'"]');
-if(chk) sec.classList.toggle('filtered', !chk.checked);
-});
-});
+document.querySelectorAll('[data-cat]').forEach(cb => {
+  cb.addEventListener('change', () => {
+    document.querySelectorAll('.category').forEach(sec => {
+      const cat = sec.dataset.cat;
+      const checkbox = document.querySelector('[data-cat="'+cat+'"]');
+      if (checkbox) sec.classList.toggle('filtered', !checkbox.checked);
+    });
+  });
 });
 </script>
 
